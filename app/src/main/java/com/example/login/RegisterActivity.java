@@ -16,6 +16,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 
 public class RegisterActivity extends AppCompatActivity {
@@ -45,7 +46,12 @@ public class RegisterActivity extends AppCompatActivity {
 
         btnRegisterUser.setOnClickListener(v -> {
             recoverData();
-            createLogin();
+
+            if (password.getText().toString().equals(confirmPassword.getText().toString())){
+                createLogin();
+            } else {
+                Toast.makeText(RegisterActivity.this, "As senhas não conferem", Toast.LENGTH_SHORT).show();
+            }
         });
 
     }
@@ -55,6 +61,8 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()){
+                    FirebaseUser firebaseUser = mAuth.getCurrentUser();
+                    user.setId(firebaseUser.getUid());
                     startActivity(new Intent(RegisterActivity.this, HomeActivity.class));
                 } else {
                     String error = task.getException().getMessage();
